@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Blog{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center mb-3">
+        <div class="col-12 col-md-8" id="container">
+            <h1 class="text-center border-top">{{ articulo.title }}</h1>
+            <p>{{ articulo.contenido }}</p>
+            {% if articulo.imagen %}
+                <img class="mx-auto d-block" src="{{ asset('imagenes/' ~ articulo.imagen) }}" alt="imagen" width="80%">
+            {% endif %}
+            <div class="row justify-content-around">
+                <p class="col-auto">Autor: {{ articulo.user }}</p>
+                <p class="col-auto">Fecha: {{ articulo.fecha ? articulo.fecha|date('Y-m-d H:i:s') : '' }}</p>
+            </div>
+            <h2>Comentarios</h2>
+            {% if is_granted('ROLE_USER') %}
+                {{ form_start(form) }}
+                    <div class="form-group">
+                        {{ form_widget(form.comentario, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_widget(form.articulo, {'attr': {'style': 'display:none;'}}) }}
+                    </div>
+                    <div class="d-grid my-3">
+                        <input type="submit" class="btn btn-primary" name="logeo" value="Comentar">
+                    </div>
+                {{ form_end(form) }}
+            {% endif %}
+            {% for comentario in articulo.getComentarios() %}
+                <div class="row justify-content-around align-items-center">
+                    <div class="border-right col-3 text-center">
+                        <p>{{ comentario.usuario }}</p>
+                        <p class="text-center">Fecha: {{ comentario.fecha ? comentario.fecha|date('Y-m-d H:i:s') : '' }}</p>
+                    </div>
+                    <p class="col-9">{{ comentario.comentario }}</p>
+                </div>
+            {% else %}
+                <h4 class="text-center">Se el primero en comentar</h4>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
